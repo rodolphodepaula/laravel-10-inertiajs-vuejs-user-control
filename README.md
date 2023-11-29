@@ -2,7 +2,7 @@
 
 Bem-vindo ao meu projeto Laravel! Este projeto utiliza Laravel 10 com Vite, Breezer, Inertia e Vue 3 para criar uma aplicação web poderosa.
 
-![Logo da minha aplicação](imagens/screem-login.jpg)
+![Logo da minha aplicação](public/images/screem-login.jpg))
 
 ## Requisitos
 
