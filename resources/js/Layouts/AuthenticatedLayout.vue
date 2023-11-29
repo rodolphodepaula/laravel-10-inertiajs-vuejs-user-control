@@ -1,3 +1,29 @@
+<script setup>
+import { ref } from "vue"
+import { menuData } from '@/menuData'
+
+import ApplicationLogo from "@/Components/ApplicationLogo.vue"
+import Dropdown from "@/Components/Dropdown.vue"
+import DropdownLink from "@/Components/DropdownLink.vue"
+import NavLink from "@/Components/NavLink.vue"
+import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue"
+
+import { Link } from "@inertiajs/vue3"
+
+const showingNavigationDropdown = ref(false)
+const isMenuOpen = ref(true)
+const menu = ref(menuData)
+
+const toggleMenu = () => {
+    isMenuOpen.value = !isMenuOpen.value
+}
+
+const toggleDropdown = (menuItem) => {
+    isMenuOpen.value = true
+    menuItem.isDropdownOpen = !menuItem.isDropdownOpen
+}
+</script>
+
 <template>
     <div class="relative min-h-screen flex">
         <div class="bg-neutral-700 text-cyan-100 w-64" :class="`${isMenuOpen ? 'menu-open' : 'menu-close'}`">
@@ -149,33 +175,7 @@
         </div>
     </div>
 </template>
-<script setup>
-import { ref } from "vue"
-import { menuData } from '@/menuData'
-import ApplicationLogo from "@/Components/ApplicationLogo.vue"
-import Dropdown from "@/Components/Dropdown.vue"
-import DropdownLink from "@/Components/DropdownLink.vue"
-import NavLink from "@/Components/NavLink.vue"
-import { HomeIcon, ChartBarIcon } from '@heroicons/vue/24/outline'
-import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue"
-import { Link } from "@inertiajs/vue3"
 
-const showingNavigationDropdown = ref(false)
-const isMenuOpen = ref(true)
-
-const menu = ref(menuData)
-
-const toggleMenu = () => {
-    isMenuOpen.value = !isMenuOpen.value
-}
-
-const toggleDropdown = (menuItem) => {
-    isMenuOpen.value = true
-    menuItem.isDropdownOpen = !menuItem.isDropdownOpen
-}
-
-
-</script>
 <style scoped>
 .flex {
     display: flex;

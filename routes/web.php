@@ -2,8 +2,6 @@
 
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -20,9 +18,10 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::resource('users', UserController::class)
-    ->only(['index', 'show', 'store', 'update', 'destroy'])
-    ->middleware(['auth', 'verified']);
+Route::get('/users', function () {
+    return Inertia::render('Users/Index');
+})->middleware(['auth', 'verified'])->name('users');
+
 
 Route::resource('companies', CompanyController::class)
     ->only(['index', 'show', 'store', 'update', 'destroy'])

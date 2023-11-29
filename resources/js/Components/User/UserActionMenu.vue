@@ -1,3 +1,28 @@
+<script setup>
+import { ref } from 'vue'
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
+import UserAction from '@/Components/User/UserAction.vue'
+
+const selectedUser = ref({})
+const showEditModal = ref(false)
+
+
+const doSomething = () => {
+
+}
+
+const openEditUserModal = (user) => {
+  console.log(showEditModal.value)
+  selectedUser.value = user
+  showEditModal.value = ! showEditModal.value
+};
+
+const deleteUser = () => {
+
+}
+</script>
+
+
 <template>
   <Menu as="div" class="relative inline-block text-left">
     <MenuButton
@@ -27,27 +52,3 @@
   </Menu>
   <UserAction v-if="showEditModal" :user="selectedUser" :is-edit="true" @close="showEditModal = false" />
 </template>
-
-<script setup>
-import { ref } from 'vue'
-import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
-import UserAction from '@/Components/User/UserAction.vue'
-
-const selectedUser = ref({})
-const showEditModal = ref(false)
-
-
-const doSomething = () => {
-
-}
-
-const openEditUserModal = (user) => {
-  console.log(showEditModal.value)
-  selectedUser.value = user
-  showEditModal.value = ! showEditModal.value
-};
-
-const deleteUser = () => {
-
-}
-</script>

@@ -9,5 +9,4 @@ export const menuData = [
     href: '/companies',
     icon: 'fas fa-building',
 },
-
 ]

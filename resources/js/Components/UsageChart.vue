@@ -1,9 +1,3 @@
-<template>
-  <div class="usage-chart">
-    <bar-chart :chart-data="chartData" :options="chartOptions" />
-  </div>
-</template>
-
 <script>
 import { Bar } from 'vue-chartjs';
 import { defineComponent, reactive, toRefs } from 'vue';
@@ -44,3 +38,10 @@ export default defineComponent({
   }
 });
 </script>
+
+<template>
+  <div class="usage-chart">
+    <bar-chart :chart-data="chartData" :options="chartOptions" />
+  </div>
+</template>
+

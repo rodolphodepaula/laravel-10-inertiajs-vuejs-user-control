@@ -27,6 +27,10 @@ class Company extends Model
         'status',
     ];
 
+    protected $casts = [
+        'status' => 'bool',
+    ];
+
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

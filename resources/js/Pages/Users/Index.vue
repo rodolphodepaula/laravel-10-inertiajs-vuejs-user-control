@@ -20,7 +20,7 @@
       <Filter>
         <template #inputFilter>
           <InputLabel for="name" value="Name" />
-          <TextInput placeholder="Nome ou Email" id="name" type="text" class="mt-1 block w-full" v-model="users.name" />
+          <TextInput placeholder="Nome ou Email" id="name" type="text" class="mt-1 block w-full" v-model="filterOptions.name" />
         </template>
         <template #buttonFilter>
           <PrimaryButton :class="{ 'opacity-25': router.processing }" :disabled="router.processing">
@@ -49,7 +49,7 @@
               <THead type="action" label="Ações"/>
             </template>
             <template #tableRows>
-              <tr v-for="user in users.data" :key="user.id" class="hover:bg-gray-50">
+              <tr v-for="user in users" :key="user.id" class="hover:bg-gray-50">
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   <CheckboxItens
                     :checked="user.selected"
@@ -66,14 +66,18 @@
                   <UserTableMenu />
                 </TData>
               </tr>
+              <tr v-if="users.length === 0">
+                <td colspan="4" class="flex items-center m-4">
+                  Nenhum Registro encontrado!
+                </td>
+              </tr>
             </template>
-
           </Table>
         </div>
       </div>
     </div>
   </authenticated-layout>
-  <user-action v-if="showOpenModal" @close="showOpenModal = false" />
+  <user-action v-if="showOpenModal" @close="showOpenModal = false" :companies="companies" />
 </template>
 
 <script setup>
@@ -101,16 +105,34 @@ import { PlusIcon } from '@heroicons/vue/24/outline'
 import { CloudArrowDownIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import { TrashIcon } from '@heroicons/vue/24/outline'
 
-import { Head, usePage, router } from '@inertiajs/vue3'
-import { ref, computed } from 'vue'
-import { all } from 'axios'
+import { Head, router } from '@inertiajs/vue3'
+import { ref, onMounted, watch  } from 'vue'
+import axios from "axios"
 
-const { users } = usePage().props
-const { company } = usePage().props
-const { profiles } = usePage().props
+
+const users = ref([])
+const paginator = ref([])
+const companies = ref({})
+const filterOptions = ref({
+  name: '',
+})
+
 const showOpenModal = ref(false)
 const allSelected = ref(false)
-const paginator = users
+
+const getUsers = (params = {}) => {
+  const requestParams = { ...filterOptions.value, ...params, include: 'companies' }
+
+  axios.get('/api/users', { params: requestParams })
+  .then(response => {
+    users.value = response.data.data
+    paginator.value = response.data.meta
+  }
+    )
+  .catch(error => console.log(error))
+}
+
+onMounted(() => getUsers())
 
 const toggleAll = () => {
   users.forEach(user => {
@@ -118,18 +140,17 @@ const toggleAll = () => {
   })
 }
 
+watch(() => users.value, (newUsers) => {
+   companies.value = [].concat(...newUsers.map(user => user.companies))
+})
+
 const breadcrumbItems = [
   { text: 'Dashboard', to: '/' },
   { text: 'Usuários', to: '/users' }
 ]
 
 const submit = () => {
-  router.visit('/users', {
-    method: 'get',
-    data: {
-      name: users.name
-    }
-  })
+  getUsers({ name: filterOptions.value.name })
 }
 
 const openEditUserModal = () => {

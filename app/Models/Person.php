@@ -19,13 +19,12 @@ class Person extends Model
 
     protected $fillable = [
         'uuid',
-        'account_id',
-        'email',
-        'name',
+        'company_id',
         'user_id',
+        'name',
+        'email',
         'enrollment',
         'image_id',
-        'status_id',
     ];
 
     public function user(): BelongsTo

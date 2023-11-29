@@ -9,6 +9,7 @@ use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -27,17 +28,15 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'uuid',
         'name',
         'email',
         'password',
         'company_id',
         'is_admin',
         'status_id',
-        'source',
-        'language',
-        'timezone',
-        'uuid',
-        'is_change_password'
+        'is_change_password',
+        'email_verified_at'
     ];
 
     /**
@@ -58,12 +57,34 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'status' => 'bool',
+        'is_admin' => 'bool',
+        'is_change_password' => 'bool'
     ];
+
+    public function getEnrollmentAttribute()
+    {
+        if (empty($this->person)) {
+            return '';
+        }
+
+        return $this->person->enrollment;
+    }
+
+    public function isMaster()
+    {
+        return $this->is_admin === true;
+    }
 
 
     public function scopeIsActive()
     {
         return $this->status_id === self::STATUS_ACTIVE;
+    }
+
+    public function scopeWhereCompanyIsActive(Builder $query)
+    {
+        $query->joinUsersHasCompanye()->where('companies.status', true);
     }
 
     public function scopeWhereName(Builder $query, string $search = ''): Builder
@@ -102,8 +123,21 @@ class User extends Authenticatable
         return $query;
     }
 
+    public function scopeJoinUsersHasCompanye(Builder $query): Builder
+    {
+        $query->join('companies', 'companies.id', 'users.company_id');
+        $query->select('users.*');
+
+        return $query;
+    }
+
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function person(): HasOne
+    {
+        return $this->hasOne(Person::class);
     }
 }

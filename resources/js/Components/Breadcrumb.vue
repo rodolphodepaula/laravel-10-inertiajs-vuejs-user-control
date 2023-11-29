@@ -1,3 +1,19 @@
+<script>
+import { Link } from "@inertiajs/vue3"
+
+export default {
+  props: {
+    items: {
+      type: Array,
+      required: true,
+    },
+  },
+  components: {
+    Link
+  }
+};
+</script>
+
 <template>
     <nav
       aria-label="breadcrumb"
@@ -40,27 +56,7 @@
     </nav>
 </template>
 
-<script>
-import { Link } from "@inertiajs/vue3"
-
-
-export default {
-  props: {
-    items: {
-      type: Array,
-      required: true,
-    },
-  },
-  components: {
-    Link
-  }
-};
-</script>
-
 <style scoped>
-/* Estilos específicos para o seu breadcrumb */
-/* Você pode manter os estilos existentes ou personalizá-los ainda mais aqui */
-
 .breadcrumb {
   /* Estilos básicos */
   padding: 8px 15px;
