@@ -45,6 +45,10 @@ Após a configuração inicial, você pode iniciar o servidor de desenvolvimento
 
 acesse o aplicativo em seu navegador em http://localhost.
 
+### Credenciais de Acesso
+
+Um usuário de teste foi criado durante a execução do seeder `UserCompanySeeder`.
+
 
 
 
