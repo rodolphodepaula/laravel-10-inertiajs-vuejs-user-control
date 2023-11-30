@@ -1,4 +1,4 @@
-# Meu Projeto Laravel com Vite e Breezer
+# Cadastro de Usuário com PHP, Laravel e PostgreSQL
 
 Bem-vindo ao meu projeto Laravel! Este projeto utiliza Laravel 10 com Vite, Breezer, Inertia e Vue 3 para criar uma aplicação web poderosa.
 
