@@ -23,8 +23,9 @@ class UserController extends Controller
         $usersQuery  = User::query();
         $usersQuery  = $this->srvUser->getBySearch($usersQuery, $filters);
         $users = $usersQuery->whereCompanyIsActive()->orderBy('users.name', 'ASC');
+        $perPage = $request->input('per_page', 10);
 
-        return new UsersCollection(paginate($users));
+        return new UsersCollection($users->paginate($perPage));
     }
 
     public function store(UserStoreRequest $request): UserJson

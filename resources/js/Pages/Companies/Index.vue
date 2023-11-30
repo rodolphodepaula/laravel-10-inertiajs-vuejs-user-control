@@ -32,14 +32,14 @@ const showOpenModal = ref(false)
 const allSelected = ref(false)
 const paginator = companies
 
-const toggleAll = () => {
-  companies.forEach(company => {
-    company.selected = allSelected.value
-  })
-}
-
 const formatDate = (data) => {
-  const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }
+  const options = {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }
 
   return new Date(data).toLocaleDateString('pt-BR', options);
 }
@@ -48,19 +48,6 @@ const breadcrumbItems = [
   { text: 'Dashboard', to: '/' },
   { text: 'Empresas', to: '/companies' }
 ]
-
-const submit = () => {
-  router.visit('/companies', {
-    method: 'get',
-    data: {
-      name: companies.name
-    }
-  })
-}
-
-const openEditCompanyModal = () => {
-  showOpenModal.value = !showOpenModal.value
-}
 </script>
 
 <template>
@@ -108,7 +95,6 @@ const openEditCompanyModal = () => {
       </div>
     </div>
   </authenticated-layout>
-  <user-action v-if="showOpenModal" @close="showOpenModal = false" />
 </template>
 
 <style>

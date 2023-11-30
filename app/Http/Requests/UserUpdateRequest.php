@@ -30,11 +30,16 @@ class UserUpdateRequest extends FormRequest
                 'lowercase',
                 'email',
                 'max:255',
-                Rule::unique('users', 'email')->ignore($this->user, 'uuid'),
+                Rule::unique('users', 'email')->ignore($this->uuid, 'uuid'),
             ],
             'status' => 'sometimes|boolean',
-            'company_uuid' => 'sometimes|uuid',
-            'password' => 'sometimes|required|min:6|max:20|confirmed',
+            'enrollment' => 'sometimes',
+            'company_uuid' => [
+                'sometimes',
+                'uuid',
+                Rule::exists('companies', 'uuid'),
+            ],
+            'password' => 'nullable|min:6|max:20|confirmed',
         ];
     }
 
@@ -55,7 +60,6 @@ class UserUpdateRequest extends FormRequest
             'status.boolean' => 'O campo Status deve ser verdadeiro (1) ou falso (0).',
             'company_uuid.required' => 'O campo Empresa é obrigatório.',
             'company_uuid.uuid' => 'O campo Empresa deve ser um UUID válido.',
-            'password.required' => 'O campo Senha é obrigatório.',
             'password.confirmed' => 'A confirmação da senha não corresponde.',
             'password.min' => 'A senha deve ter pelo menos :min caracteres.',
             'password.max' => 'A senha não pode ter mais de :max caracteres.',

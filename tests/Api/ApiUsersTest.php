@@ -20,8 +20,8 @@ class ApiUsersTest extends TestCase
 
         $this->setAuthUser($user);
 
-        $code = "firstdecision";
-        $companyName = "First Decision";
+        $code = "demo";
+        $companyName = "Empresa Demonstrativa";
 
         $company = Company::firstOrCreate(
             ['code' => $code],
@@ -39,7 +39,7 @@ class ApiUsersTest extends TestCase
             'status' => 'invalid',
             'company_uuid' => '123',
             'password' => '12345',
-            'password_confirmation' => '123456',
+            'password_confirmation' => '123456'
         ];
 
         $response = $this->api('POST', 'users', $data)
@@ -51,6 +51,7 @@ class ApiUsersTest extends TestCase
         $this->assertEquals($response['status'][0], "O campo Status deve ser verdadeiro (1) ou falso (0).");
         $this->assertEquals($response['company_uuid'][0], "O campo Empresa deve ser um UUID válido.");
         $this->assertEquals($response['password'][0], "A senha deve ter pelo menos 6 caracteres.");
+        $this->assertEquals($response['password'][1], "A confirmação da senha não corresponde.");
 
         $data = [
             'name' => 'Rodolpho de Paula',
@@ -62,7 +63,8 @@ class ApiUsersTest extends TestCase
         ];
 
         $this->api('POST', 'users', $data)->assertStatus(201);
-        $this->assertCount(3, $this->api('GET', 'users')->assertStatus(200)->json('data'));
+        $this->assertCount(2, $this->api('GET', 'users')->assertStatus(200)->json('data'));
+
         $user = $this->api('GET', 'users', [
             'name' => 'rodolpho'
         ])->assertStatus(200)->json('data.0');
@@ -92,8 +94,8 @@ class ApiUsersTest extends TestCase
 
         $this->setAuthUser($user);
 
-        $code = "firstdecision";
-        $companyName = "First Decision";
+        $code = "demo";
+        $companyName = "Empresa Demonstrativa";
 
         $company = Company::firstOrCreate(
             ['code' => $code],
@@ -140,8 +142,8 @@ class ApiUsersTest extends TestCase
 
         $this->setAuthUser($user);
 
-        $code = "firstdecision";
-        $companyName = "First Decision";
+        $code = "demo";
+        $companyName = "Empresa Demonstrativa";
 
         $company = Company::firstOrCreate(
             ['code' => $code],

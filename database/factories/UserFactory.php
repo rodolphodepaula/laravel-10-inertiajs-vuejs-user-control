@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Company;
+use App\Models\Person;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +15,8 @@ use Illuminate\Support\Str;
 class UserFactory extends Factory
 {
     protected static ?string $password;
+
+    protected $model = User::class;
 
     /**
      * Define the model's default state.
@@ -27,9 +30,25 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail,
             'password' => bcrypt(Str::random(10)),
             'company_id' => Company::factory(),
-            'status_id' => User::STATUS_ACTIVE,
+            'status' => User::STATUS_ACTIVE,
             'is_admin' => false,
         ];
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function (User $user) {
+            Person::firstOrCreate(
+                ['email' => $user->email],
+                [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'company_id' => $user->company_id,
+                    'user_id' => $user->id,
+                    'enrollment' => random_int(1000, 9999),
+                ]
+            );
+        });
     }
 
     /**

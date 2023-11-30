@@ -38,16 +38,13 @@ class PersonService extends AbstractService
     public function update(array $params): Person
     {
         return DB::transaction(function () use ($params){
-            $person = Person::updateOrCreate(
-                ['uuid' =>$params['uuid']],
-                [
-                    'name' => $params['name'],
-                    'email' => $params['email'],
-                    'company_id' => $params['company_id'],
-                    'user_id' => $params['user_id'],
-                    'enrollment' =>  $params['enrollment'],
-                ]
-            );
+            $person = Person::where('user_id', $params['user_id'] ?? '')->firstOrFail();
+            $person->company_id = $params['company_id'];
+            $person->company_id = $params['company_id'];
+            $person->name = $params['name'];
+            $person->email = $params['email'];
+            $person->enrollment = $params['enrollment'];
+            $person->save();
 
             return $person;
         });

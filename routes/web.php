@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserExportController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -14,14 +16,13 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::get('/users', function () {
     return Inertia::render('Users/Index');
 })->middleware(['auth', 'verified'])->name('users');
-
 
 Route::resource('companies', CompanyController::class)
     ->only(['index', 'show', 'store', 'update', 'destroy'])

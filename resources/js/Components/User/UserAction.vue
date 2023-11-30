@@ -3,18 +3,20 @@ import { ref, defineProps, defineEmits, computed, onMounted } from 'vue'
 import SelectCompany from '@/Components/Company/SelectCompany.vue'
 import ToggleSwitch from '@/Components/ToggleSwitch.vue'
 import TextInput from '@/Components/TextInput.vue'
-import InputError from '@/Components/InputError.vue'
 import InputLabel from '@/Components/InputLabel.vue'
 import axios from "axios"
 
+const emit = defineEmits(['close'])
 const props = defineProps({
   user: Object,
   companies: Object,
   isEdit: Boolean,
+  isShow: Boolean,
 })
 
 const model = ref({
-  name:null,
+  uuid: null,
+  name: null,
   email: null,
   enrollment: null,
   status: false,
@@ -26,26 +28,35 @@ const model = ref({
 const errors = ref({})
 const successMessage = ref('')
 const companies = ref(props.companies)
-const emit = defineEmits(['close'])
+
+onMounted(() => {
+  if (props.user) {
+    handleInit()
+  }
+});
 
 const title = computed(() => {
-  return props.isEdit ? 'Editar Usuário' : 'Adicionar Usuário'
+  return props.isEdit ? 'Editar Usuário' : 'Registro do Usuário'
 })
 
 const handleInit = () => {
-  props.isEdit.value = !!props.user
-  model.value = props.user
+  model.value.uuid = props.user?.uuid
+  model.value.name = props.user?.name
+  model.value.email = props.user?.email
+  model.value.enrollment = props.user?.enrollment
+  model.value.status = props.user?.status ?? false
+  model.value.company_uuid = props.user?.company_uuid
 }
 
 // Método para fechar o modal
-const closeModal = () => {
+const close = () => {
   emit('close')
 }
 
 // Método para salvar o usuário
 const saveUser = () => {
   const method = props.isEdit ? 'put' : 'post'
-  const url = props.isEdit ? `/api/users/${model.uuid}` : '/api/users'
+  const url = props.isEdit ? `/api/users/${model.value.uuid}` : '/api/users'
 
   axios({
     method: method,
@@ -56,7 +67,7 @@ const saveUser = () => {
       successMessage.value = 'Usuário salvo com sucesso!';
       setTimeout(() => {
         successMessage.value = '';
-        closeModal()
+        close()
       }, 2000)
     })
     .catch(error => {
@@ -83,7 +94,7 @@ const saveUser = () => {
           <!-- Conteúdo do modal -->
           <div class="h-full flex flex-col bg-white shadow-xl overflow-y-scroll">
             <header class="px-4 sm:px-6 bg-blue-100 py-4">
-              <h2 class="text-lg font-medium text-gray-900 flex items-center">
+              <h2 class="text-lg font-medium text-gray-900 flex items-left">
                 <i class="fas fa-user-pen text-blue-500"></i>
                 <span class="pl-3">{{ title }}</span>
               </h2>
@@ -92,19 +103,22 @@ const saveUser = () => {
             <div v-if="successMessage" class="bg-green-500 text-white p-4 mb-4">
               {{ successMessage }}
             </div>
-            <div class="mt-4 relative flex-1 px-4 sm:px-6">
+            <div class="mt-4 relative flex-1 px-4 sm:px-6 text-left">
               <div class="space-y-4">
-                <form @submit.prevent="saveUser" :disabled="!!successMessage">
+                  <input type="hidden" name="uuid" v-model="model.uuid"/>
                   <div class="mb-4">
-                    <InputLabel  for="name" value="Nome Completo"/>
+                    <InputLabel for="name" value="Nome Completo" />
                     <TextInput
                       id="name"
                       type="text"
                       v-model="model.name"
                       required
                       autocomplete="name"
-                      class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
-                      <p  v-if="errors.name"><span class="text-red-500 text-sm">{{ errors.name[0] }}</span></p>
+                      class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                      :class="{ 'bg-gray-200': isShow }"
+                      :disabled="isShow"
+                    />
+                    <p v-if="errors.name"><span class="text-red-500 text-sm">{{ errors.name[0] }}</span></p>
                   </div>
                   <div class="mb-4">
                     <InputLabel for="email" value="E-mail" />
@@ -114,8 +128,11 @@ const saveUser = () => {
                       v-model="model.email"
                       required
                       autocomplete="email"
-                      class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
-                      <p v-if="errors.email"><span class="text-red-500 text-sm">{{ errors.email[0] }}</span></p>
+                      class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                      :class="{ 'bg-gray-200': isShow }"
+                      :disabled="isShow"
+                    />
+                    <p v-if="errors.email"><span class="text-red-500 text-sm">{{ errors.email[0] }}</span></p>
                   </div>
                   <!-- ... outros campos ... -->
                   <div class="mb-4">
@@ -124,58 +141,62 @@ const saveUser = () => {
                       id="enrollment"
                       type="text"
                       v-model="model.enrollment"
-                      class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm"/>
-                      <p  v-if="errors.enrollment"><span class="text-red-500 text-sm">{{ errors.enrollment[0] }}</span></p>
+                      class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                      :class="{ 'bg-gray-200': isShow }"
+                      :disabled="isShow"
+                      />
+                    <p v-if="errors.enrollment"><span class="text-red-500 text-sm">{{ errors.enrollment[0] }}</span></p>
                   </div>
                   <div class="mb-4">
                     <label class="text-gray-700 font-semibold block mb-2">Empresa:</label>
                     <SelectCompany
                       id="company_uuid"
                       :companies="companies"
-                      v-model="model.company_uuid" />
-                      <p v-if="errors.company_uuid"><span class="text-red-500 text-sm">{{ errors.company_uuid[0] }}</span></p>
+                      v-model="model.company_uuid"
+                      :class="{ 'bg-gray-200': isShow }"
+                      :disabled="isShow"
+                      />
+                    <p v-if="errors.company_uuid"><span class="text-red-500 text-sm">{{ errors.company_uuid[0] }}</span>
+                    </p>
                   </div>
-                  <div class="mb-4">
+                  <div class="mb-4" v-if="!isShow">
                     <InputLabel for="password" value="Senha" />
-                    <TextInput
-                        id="password"
-                        type="password"
-                        class="mt-1 block w-full"
-                        v-model="model.password"
-                        required
-                        autocomplete="new-password"
-                    />
-                   <p v-if="errors.password"><span class="text-red-500 text-sm" >{{ errors.password[0] }}</span></p>
+                    <TextInput id="password" type="password" class="mt-1 block w-full" v-model="model.password"
+                      autocomplete="new-password" />
+                    <p v-if="errors.password"><span class="text-red-500 text-sm">{{ errors.password[0] }}</span></p>
                   </div>
-                  <div class="mt-4">
+                  <div class="mt-4" v-if="!isShow">
                     <InputLabel for="password_confirmation" value="Confirmar Senha" />
-                    <TextInput
-                      id="password_confirmation"
-                      type="password"
-                      class="mt-1 block w-full"
-                      v-model="model.password_confirmation"
-                      required
-                      autocomplete="new-password"
-                    />
+                    <TextInput id="password_confirmation" type="password" class="mt-1 block w-full"
+                      v-model="model.password_confirmation" autocomplete="new-password" />
                   </div>
                   <div class="m-4">
-                    <ToggleSwitch v-model="model.status" label="Usuário Ativo" />
+                    <ToggleSwitch
+                      v-model="model.status"
+                      label="Usuário Ativo"
+                      :disabled="isShow"
+                      />
                   </div>
                   <hr class="border-gray-200 my-4">
-                  <div class="mt-auto py-4 px-4 sm:px-6">
-                    <div class="flex justify-start space-x-4">
-                      <button type="submit" :disabled="!!successMessage" class="px-4 bg-blue-500 p-3 rounded text-white hover:bg-blue-400">
-                        Salvar
-                      </button>
-                      <button type="button" :disabled="!!successMessage" @click="closeModal"
-                        class="px-4 bg-gray-500 p-3 rounded text-white hover:bg-gray-400">
-                        Fechar
-                      </button>
-                    </div>
-                  </div>
-                </form>
               </div>
             </div>
+            <!-- Rodapé fixo -->
+          <div class="mt-auto">
+            <hr class="border-gray-200">
+            <div class="py-4 px-4 sm:px-6 bg-white">
+              <div class="flex justify-start space-x-4">
+                <button v-if="!isShow" @click="saveUser" type="submit" :disabled="!!successMessage"
+                  class="px-4 bg-blue-500 p-3 rounded text-white hover:bg-blue-400">
+                  Salvar
+                </button>
+                <button type="button" :disabled="!!successMessage" @click="close"
+                  class="px-4 bg-gray-500 p-3 rounded text-white hover:bg-gray-400">
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Final do rodapé fixo -->
           </div>
         </div>
       </section>

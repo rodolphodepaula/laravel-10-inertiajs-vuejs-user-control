@@ -16,12 +16,13 @@ class UserJson extends JsonResource
         return [
             'uuid' => $this->uuid,
             'name' => $this->name,
+            'is_admin' => $this->isMaster(),
             'company' => $this->company->name,
+            'company_uuid' => $this->company->uuid,
             'person' => $this->person ?? null,
             'email' => $this->email,
-            'is_admin' => $this->isMaster(),
             'enrollment' => $this->enrollment,
-            'status_id' => $this->status_id,
+            'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

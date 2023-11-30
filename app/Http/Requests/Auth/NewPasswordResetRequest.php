@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Rules\CustomPasswordRule;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,16 +25,18 @@ class NewPasswordResetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'token' => 'required',
-            'email' => [
+            'name' => 'required|string|min:3|max:50',
+            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+            'enrollment' => 'sometimes',
+            'status' => 'required|boolean',
+            'company_uuid' => 'required|uuid',
+            'password' => [
                 'required',
-                'string',
-                'lowercase',
-                'email',
-                'max:255',
-                Rule::exists('users', 'email'),
+                'min:6',
+                'max:20',
+                'confirmed',
+                new CustomPasswordRule(),
             ],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ];
     }
 

@@ -20,7 +20,7 @@ const userInitials = computed(() => {
 <template>
   <div class="flex items-center space-x-2 p-2 rounded-lg ">
     <div class="flex-shrink-0">
-      <span class="block h-2 w-2 rounded-full bg-blue-600" v-if="user.status_id"></span>
+      <span class="block h-2 w-2 rounded-full bg-blue-600" v-if="user.status"></span>
       <span class="block h-2 w-2 rounded-full bg-gray-600" v-else></span>
     </div>
     <div class="flex-shrink-0">

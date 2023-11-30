@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('is_admin')->default(0);
             $table->boolean('is_change_password')->nullable();
-            $table->integer('status_id')->index()->default(1);
+            $table->boolean('status')->index()->default(true);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

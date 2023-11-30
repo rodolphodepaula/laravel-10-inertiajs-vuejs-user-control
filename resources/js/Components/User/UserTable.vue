@@ -1,3 +1,15 @@
+<script setup>
+import { defineProps, defineEmits } from 'vue'
+
+const emit = defineEmits(['page'])
+const props = defineProps({
+  paginator: Object,
+});
+
+const goToPage = (page) => {
+  emit('page', page)
+}
+</script>
 <template>
   <table class="min-w-full table-auto">
     <thead class="bg-gray-100">
@@ -31,42 +43,16 @@
         </div>
         <div>
           <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-            <!-- <a :href="props.paginator.prev_page_url"
-              class="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20">
-            <span class="sr-only">Previous</span>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="w-6 h-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-            </svg>
-          </a> -->
             <template v-for="(link, index) in props.paginator.links" :key="link.label">
-              <a v-if="link.label == index" :href="link.url"
+              <a v-if="link.label == index"  @click="goToPage(index)"
                 :class="{ 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600': link.active }"
                 class="relative hidden items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20 md:inline-flex">
               {{ link.label }}
             </a>
             </template>
-
-            <!-- <a :href="props.paginator.next_page_url"
-              class="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20">
-            <span class="sr-only">Next</span>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="w-6 h-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-            </svg>
-          </a> -->
           </nav>
         </div>
       </div>
     </div>
   </template>
 </template>
-
-<script setup>
-import { defineProps } from 'vue'
-
-const props = defineProps({
-  paginator: Object,
-});
-
-</script>

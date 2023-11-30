@@ -19,8 +19,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, AllModels, UsesUuid, SoftDeletes;
 
-    public const STATUS_ACTIVE = 1;
-    public const STATUS_INACTIVE = 0;
+    public const STATUS_ACTIVE = true;
+    public const STATUS_INACTIVE = false;
 
     /**
      * The attributes that are mass assignable.
@@ -34,7 +34,7 @@ class User extends Authenticatable
         'password',
         'company_id',
         'is_admin',
-        'status_id',
+        'status',
         'is_change_password',
         'email_verified_at'
     ];
@@ -79,7 +79,7 @@ class User extends Authenticatable
 
     public function scopeIsActive()
     {
-        return $this->status_id === self::STATUS_ACTIVE;
+        return $this->status === self::STATUS_ACTIVE;
     }
 
     public function scopeWhereCompanyIsActive(Builder $query)

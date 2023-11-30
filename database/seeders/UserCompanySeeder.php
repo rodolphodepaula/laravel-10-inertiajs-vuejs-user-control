@@ -16,9 +16,9 @@ class UserCompanySeeder extends Seeder
      */
     public function run(): void
     {
-        $code = "firstdecision";
-        $companyName = "First Decision";
-        $userEmailDemo = 'demo@firstdecision.com.br';
+        $code = "demo";
+        $companyName = "Empresa Demonstrativa";
+        $userEmailDemo = 'admin@demo.com.br';
         $userEmail = 'rodolpho.paula@outlook.com.br';
 
         $company = Company::firstOrCreate(
@@ -38,8 +38,8 @@ class UserCompanySeeder extends Seeder
                 'email' => $userEmailDemo,
                 'password' => bcrypt('password'),
                 'company_id' => $company->id,
-                'status_id' => User::STATUS_ACTIVE,
-                'is_admin' => false
+                'status' => User::STATUS_ACTIVE,
+                'is_admin' => true
             ]
         );
 
@@ -50,7 +50,7 @@ class UserCompanySeeder extends Seeder
                 'email' => $userEmail,
                 'password' => bcrypt('password'),
                 'company_id' => $company->id,
-                'status_id' => User::STATUS_ACTIVE,
+                'status' => User::STATUS_ACTIVE,
                 'is_admin' => true
             ]
         );

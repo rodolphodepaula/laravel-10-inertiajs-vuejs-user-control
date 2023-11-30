@@ -38,7 +38,7 @@ class UserService extends AbstractService
                 'email' => $email,
                 'password' => $password,
                 'company_id' => $companyId,
-                'status_id' => $params['status'] ?? false,
+                'status' => $params['status'] ?? false,
             ]);
 
             $user->save();
@@ -61,18 +61,24 @@ class UserService extends AbstractService
         return DB::transaction(function () use ($user, $params) {
             if (! empty($params['password'] ?? '')) {
                 $params['password'] = Hash::make($params['password']);
+                $user->password = $params['password'];
             }
 
             if (! empty($params['email'] ?? '')) {
                 $params['email'] = strtolower(remove_accents(trim($params['email'])));
+                $user->email = $params['email'];
             }
 
-            $user->fill($params);
+            if (! empty($params['company_uuid'] ?? '')) {
+                $user->company_id = Company::whereUuid($params['company_uuid'] ?? '')->value('id');
+            }
+
+            $user->name = $params['name'];
+            $user->status = $params['status'];
             $user->save();
 
             $srvPerson = app(PersonService::class);
-            $srvPerson->save([
-                'uuid' => $user->uuid,
+            $srvPerson->update([
                 'company_id' => $user->company_id,
                 'user_id' => $user->id,
                 'name' => $user->name,
